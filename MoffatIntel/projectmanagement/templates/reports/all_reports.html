@@ -4,58 +4,108 @@
 {% load static %}
 
 {% block content %}
-<script src="{% static 'projectmanagement/deleteConfirm.js' %}" xmlns:v-on="http://www.w3.org/1999/xhtml"></script>
-<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-
-<div id="app">
 
 <h1 class="section-header">Reports</h1>
 
 {% if reports %}
-    <div class="reports-list-div">
-        <table width="98%" height="98%" align="center" cellpadding="10" border="0">
-            <tr class="headers" style="background-color: initial;">
-                <th hidden="hidden"></th>
-            </tr>
+<div class="reports-list-div">
+    <table width="98%" height="98%" align="center" cellpadding="10" border="0">
+        <tr class="headers" style="background-color: initial;">
+            <th hidden="hidden"></th>
+        </tr>
         {% for report in reports %}
-                <tr class="report-item zebra">
-                    <td><a href="#">{{report.name}}</a></td>
-                </tr>
+        <tr class="report-item zebra" onclick="toggleDetails(this)">
+            <td><a href="#">{{report.name}}</a></td>
+        </tr>
+
+        <tr class="details" style="display: none;">
+            <td colspan="2">
+                <fieldset class="fieldset" style="margin-top: 0px">
+                    <legend>Details for <span style="font-weight: bold">{{ report.name }}</span></legend>
+
+                    {% if report.id == 1 %}
+                    <div style="display: inline-block">
+                        <label for="project">Project: </label>
+                        <select name="project" id="project" class="input-field">
+                            {% for project in projects %}
+                            <option value="{{project.id}}">{{project.name}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div style="display: inline-block">
+                        <label for="subven">Vendor/Subcontractor: </label>
+                        <select name="subven" id="subven" class="input-field">
+                            {% for sub in subs %}
+                            <option value="{{ sub.name }}">{{ sub.name }}</option>
+                            {% endfor %}
+                            {% for vendor in vendors %}
+                            <option value="{{ vendor.name }}">{{ vendor.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div id="draw-container" style="display: inline-block;">
+                        <label for="draw">Draw: </label>
+                        <select id="draw-select" name="draw" class="input-field"></select>
+                    </div>
+                    {% endif %}
+
+                    <button type="button" onclick="toggileDetails(this)" class="add-button">Close</button>
+                </fieldset>
+            </td>
+        </tr>
 
         {% endfor %}
-        </table>
-    </div>
+    </table>
+</div>
 {% else %}
-    <div class="reports-list-div">
-        <table>
-            <tr class="report-item no-hover">
-                <td>There are currently no reports available.</td>
-            </tr>
-        </table>
-    </div>
+<div class="reports-list-div">
+    <table>
+        <tr class="report-item no-hover">
+            <td>There are currently no reports available.</td>
+        </tr>
+    </table>
+</div>
 
 {% endif %}
 
 </table>
 
-</div>
-
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-    const app = Vue.createApp({
-  data() {
-    return {
-      isDivVisible: false,
-    };
-  },
+function toggleDetails(reportRow) {
+    const detailsRow = reportRow.nextElementSibling;
+    const detailsFieldset = detailsRow.querySelector('fieldset');
+    detailsRow.style.display = detailsRow.style.display === 'none' ? 'table-row' : 'none';
 
-  methods: {
-    showDiv() {
-      this.isDivVisible = !this.isDivVisible;
-    },
-  },
+    // Show draw options if "Draw" select is available and the row is expanded
+    if (detailsRow.style.display === 'table-row') {
+        const drawContainer = detailsRow.querySelector('#draw-container');
+        if (drawContainer) {
+            drawContainer.style.display = 'block';
+        }
+    }
+}
+
+// Simulate dynamic draw options for the selected project
+$(document).ready(function() {
+    $('#project').on('change', function() {
+        const selectedProject = $(this).val();
+        const drawSelect = $('#draw-select');
+
+        // Clear previous options
+        drawSelect.empty();
+
+        // Simulate adding draw options based on selected project
+        {% for draw in draws %}
+        drawSelect.append($('<option>', {
+            value: '{{ draw }}',
+            text: '{{ draw }}'
+        }));
+        {% endfor %}
+    });
 });
-
-const vm = app.mount("#app");
 </script>
 
 {% endblock %}
