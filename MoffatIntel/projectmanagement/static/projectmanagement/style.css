@@ -410,6 +410,8 @@ a {
     border-radius:8px;
     border: 2px solid #7c0300;
     background-color: #7c0300;
+        cursor: pointer;
+
 }
 
 .add-button-small{
@@ -421,6 +423,8 @@ a {
     border-radius:8px;
     border: 2px solid #7c0300;
     background-color: #7c0300;
+        cursor: pointer;
+
 }
 
 button{
@@ -449,7 +453,8 @@ button{
     margin-right: 31px;
     border-radius:8px;
     border: 2px solid #7c0300;
-    background-color: #7c0300
+    background-color: #7c0300;
+    color: white;
 }
 
 .progress-container{
