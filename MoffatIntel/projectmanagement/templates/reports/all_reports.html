@@ -27,6 +27,7 @@
                     <div style="display: inline-block">
                         <label for="project">Project: </label>
                         <select name="project" id="project" class="input-field">
+                            <option></option>
                             {% for project in projects %}
                             <option value="{{project.id}}">{{project.name}}</option>
                             {% endfor %}
@@ -36,22 +37,21 @@
                     <div style="display: inline-block">
                         <label for="subven">Vendor/Subcontractor: </label>
                         <select name="subven" id="subven" class="input-field">
+                            <option></option>
                             {% for sub in subs %}
-                            <option value="{{ sub.name }}">{{ sub.name }}</option>
+                            <option value="{{ sub.id }}">{{ sub.name }}</option>
                             {% endfor %}
                             {% for vendor in vendors %}
-                            <option value="{{ vendor.name }}">{{ vendor.name }}</option>
+                            <option value="{{ vendor.id }}">{{ vendor.name }}</option>
                             {% endfor %}
                         </select>
                     </div>
 
-                    <div id="draw-container" style="display: inline-block;">
-                        <label for="draw">Draw: </label>
-                        <select id="draw-select" name="draw" class="input-field"></select>
-                    </div>
                     {% endif %}
-
-                    <button type="button" onclick="toggileDetails(this)" class="add-button">Close</button>
+                    <div style="margin-top: -20px">
+                        <a class="add-new" id="generate-report-link" href="#" data-base-url="{% url 'projectmanagement:new_draw_report_by_sub' 999 998 %}" style="float: right">Generate Report</a>
+                        <button type="button" onclick="toggleDetails(this.parentElement.parentElement.parentElement.previousElementSibling)" class="add-button">Close</button>
+                    </div>
                 </fieldset>
             </td>
         </tr>
@@ -72,7 +72,6 @@
 
 </table>
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
 function toggleDetails(reportRow) {
     const detailsRow = reportRow.nextElementSibling;
@@ -88,24 +87,27 @@ function toggleDetails(reportRow) {
     }
 }
 
-// Simulate dynamic draw options for the selected project
-$(document).ready(function() {
-    $('#project').on('change', function() {
-        const selectedProject = $(this).val();
-        const drawSelect = $('#draw-select');
+const generateReportLink = document.getElementById('generate-report-link');
+const projectSelect = document.getElementById('project');
+const subvenSelect = document.getElementById('subven');
 
-        // Clear previous options
-        drawSelect.empty();
+// Function to update the Generate Report link
+function updateGenerateReportLink() {
+    const selectedProjectId = projectSelect.value;
+    const selectedSubvenId = subvenSelect.value;
 
-        // Simulate adding draw options based on selected project
-        {% for draw in draws %}
-        drawSelect.append($('<option>', {
-            value: '{{ draw }}',
-            text: '{{ draw }}'
-        }));
-        {% endfor %}
-    });
-});
+    if (selectedProjectId && selectedSubvenId) {
+            const baseUrl = generateReportLink.getAttribute('data-base-url');
+            const finalUrl = baseUrl.replace('999', selectedProjectId).replace('998', selectedSubvenId);
+        generateReportLink.href = finalUrl;
+    } else {
+        generateReportLink.href = '#';
+    }
+}
+
+// Update link when selections change
+subvenSelect.addEventListener('change', updateGenerateReportLink);
+
 </script>
 
 {% endblock %}

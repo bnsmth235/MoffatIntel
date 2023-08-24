@@ -201,6 +201,7 @@ def new_invoice(request, project_id, draw_id):
             return render(request, 'draws/new_invoice.html', context)
 
         invoice = Invoice()
+        invoice.date = datetime.now()
         invoice.draw_id = draw
         invoice.invoice_date = invoice_date
         invoice.invoice_num = invoice_num

@@ -127,6 +127,11 @@ class Subgroup(models.Model):
 class Report(models.Model):
     name = models.CharField(max_length=150)
 
+class GeneratedReport(models.Model):
+    name = models.CharField(max_length=150)
+    date = models.DateTimeField('Generated')
+    pdf = models.FileField(upload_to='projectmanagement/reports/', default=None)
+
 class Subcontractor(models.Model):
     name = models.CharField(max_length=50)
     address = models.CharField(max_length=200)
