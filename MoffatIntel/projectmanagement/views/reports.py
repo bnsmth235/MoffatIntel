@@ -1,7 +1,8 @@
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render
+from django.http import HttpResponse
+from django.shortcuts import render, get_object_or_404, redirect
 from ..models import Project, Draw, Group, Subgroup, Subcontractor, Vendor, Report, Invoice, Check, Contract, Exhibit, Estimate
-
+from ..pdf_create.create_draw_report_by_sub import create_draw_report_by_sub
 
 @login_required(login_url='projectmanagement:login')
 def reports(request):
@@ -30,3 +31,38 @@ def reports(request):
     }
 
     return render(request, 'reports/all_reports.html', context)
+
+
+@login_required(login_url='projectmanagement:login')
+def new_draw_report_by_sub(request, project_id, sub_id):
+    project = get_object_or_404(Project, pk=project_id)
+    sub = None
+    vendor = None
+    checks = None
+    invoices = None
+
+    try:
+        sub = get_object_or_404(Subcontractor, pk=sub_id)
+    except:
+        vendor = get_object_or_404(Vendor, pk=sub_id)
+
+    if sub:
+        invoices = Invoice.objects.filter(sub_id=sub)
+        checks = Check.objects.filter(invoice_id__in=invoices)
+    elif vendor:
+        invoices = Invoice.objects.filter(vendor_id=vendor)
+        checks = Check.objects.filter(invoice_id__in=invoices)
+    else:
+        redirect('projectmanagement:reports')
+
+    exhibits = Exhibit.objects.filter(project_id=project, sub_id=sub)
+    groups = Group.objects.filter(project_id=project)
+    draws = Draw.objects.filter(project_id=project)
+
+    report = create_draw_report_by_sub(project, draws, sub, vendor, checks, invoices, exhibits, groups)
+    pdf_bytes = report.pdf.read()
+
+    response = HttpResponse(pdf_bytes, content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="{report.pdf.name}"'
+
+    return response

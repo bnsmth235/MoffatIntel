@@ -59,10 +59,12 @@ urlpatterns = [
     path('new_purchase_order/<int:project_id>/', contracts.new_purchase_order, name='new_purchase_order'),
     path('new_purchase_order/', contracts.new_purchase_order, name='new_purchase_order'),
     path('new_exhibit/<int:project_id>/<int:sub_id>/', contracts.new_exhibit, name='new_exhibit'),
+    path('new_draw_report_by_sub/<int:project_id>/<int:sub_id>/', reports.new_draw_report_by_sub,
+         name='new_draw_report_by_sub'),
 
     path('contract_view/<int:project_id>/<int:sub_id>', contracts.contract_view, name='contract_view'),
     path('draw_view/<int:project_id>/<int:draw_id>/', draws.draw_view, name='draw_view'),
-    path('plan_view/<int:project_id>/<int:plan_id>/', plans.plan_view, name='plan_view'),
+    path('plan_view/<int:plan_id>/', plans.plan_view, name='plan_view'),
     path('invoice_view/<int:invoice_id>/', draws.invoice_view, name='invoice_view'),
     path('check_view/<int:check_id>/', draws.check_view, name='check_view'),
     path('lr_view/<int:check_id>/', contracts.lr_view, name='lr_view'),

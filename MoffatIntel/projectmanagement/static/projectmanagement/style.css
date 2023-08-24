@@ -455,6 +455,8 @@ button{
     border: 2px solid #7c0300;
     background-color: #7c0300;
     color: white;
+    font-weight: bold;
+    font-size: 18px;
 }
 
 .progress-container{
@@ -471,8 +473,6 @@ progress{
 .add-new a{
     text-decoration: none;
     color: white;
-    font-size: 18px;
-    font-weight: bold;
 }
 
 .inline-edit-button{
