@@ -4,23 +4,57 @@
 {% load static %}
 
 {% block content %}
-<script src="{% static 'projectmanagement/deleteConfirm.js' %}" xmlns:v-on="http://www.w3.org/1999/xhtml"></script>
-<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-
-<div id="app">
 
 <h1 class="section-header">Reports</h1>
 
 {% if reports %}
-    <div class="reports-list-div">
-        <table width="98%" height="98%" align="center" cellpadding="10" border="0">
-            <tr class="headers" style="background-color: initial;">
-                <th hidden="hidden"></th>
-            </tr>
+<div class="reports-list-div">
+    <table width="98%" height="98%" align="center" cellpadding="10" border="0">
+        <tr class="headers" style="background-color: initial;">
+            <th hidden="hidden"></th>
+        </tr>
         {% for report in reports %}
-                <tr class="report-item zebra">
-                    <td><a href="#">{{report.name}}</a></td>
-                </tr>
+        <tr class="report-item zebra" onclick="toggleDetails(this)">
+            <td><a href="#">{{report.name}}</a></td>
+        </tr>
+
+        <tr class="details" style="display: none;">
+            <td colspan="2">
+                <fieldset class="fieldset" style="margin-top: 0px">
+                    <legend>Details for <span style="font-weight: bold">{{ report.name }}</span></legend>
+
+                    {% if report.id == 1 %}
+                    <div style="display: inline-block">
+                        <label for="project">Project: </label>
+                        <select name="project" id="project" class="input-field">
+                            <option></option>
+                            {% for project in projects %}
+                            <option value="{{project.id}}">{{project.name}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div style="display: inline-block">
+                        <label for="subven">Vendor/Subcontractor: </label>
+                        <select name="subven" id="subven" class="input-field">
+                            <option></option>
+                            {% for sub in subs %}
+                            <option value="{{ sub.id }}">{{ sub.name }}</option>
+                            {% endfor %}
+                            {% for vendor in vendors %}
+                            <option value="{{ vendor.id }}">{{ vendor.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    {% endif %}
+                    <div style="margin-top: -20px">
+                        <a class="add-new" id="generate-report-link" href="#" data-base-url="{% url 'projectmanagement:new_draw_report_by_sub' 999 998 %}" style="float: right">Generate Report</a>
+                        <button type="button" onclick="toggleDetails(this.parentElement.parentElement.parentElement.previousElementSibling)" class="add-button">Close</button>
+                    </div>
+                </fieldset>
+            </td>
+        </tr>
 
         {% endfor %}
         </table>
@@ -38,24 +72,42 @@
 
 </table>
 
-</div>
-
 <script>
-    const app = Vue.createApp({
-  data() {
-    return {
-      isDivVisible: false,
-    };
-  },
+function toggleDetails(reportRow) {
+    const detailsRow = reportRow.nextElementSibling;
+    const detailsFieldset = detailsRow.querySelector('fieldset');
+    detailsRow.style.display = detailsRow.style.display === 'none' ? 'table-row' : 'none';
 
-  methods: {
-    showDiv() {
-      this.isDivVisible = !this.isDivVisible;
-    },
-  },
-});
+    // Show draw options if "Draw" select is available and the row is expanded
+    if (detailsRow.style.display === 'table-row') {
+        const drawContainer = detailsRow.querySelector('#draw-container');
+        if (drawContainer) {
+            drawContainer.style.display = 'block';
+        }
+    }
+}
 
-const vm = app.mount("#app");
+const generateReportLink = document.getElementById('generate-report-link');
+const projectSelect = document.getElementById('project');
+const subvenSelect = document.getElementById('subven');
+
+// Function to update the Generate Report link
+function updateGenerateReportLink() {
+    const selectedProjectId = projectSelect.value;
+    const selectedSubvenId = subvenSelect.value;
+
+    if (selectedProjectId && selectedSubvenId) {
+            const baseUrl = generateReportLink.getAttribute('data-base-url');
+            const finalUrl = baseUrl.replace('999', selectedProjectId).replace('998', selectedSubvenId);
+        generateReportLink.href = finalUrl;
+    } else {
+        generateReportLink.href = '#';
+    }
+}
+
+// Update link when selections change
+subvenSelect.addEventListener('change', updateGenerateReportLink);
+
 </script>
 
 {% endblock %}

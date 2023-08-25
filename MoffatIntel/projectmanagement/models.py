@@ -76,7 +76,7 @@ DIVISION_CHOICES = [
 
 STATUS_OPTIONS = [("I", "In Progress"), ("C", "Completed"), ("O", "On Hold")]
 
-METHOD_OPTIONS = [("I", "Invoice"), ("E", "Exhibit"), ("P", "Purchase Order")]
+METHOD_OPTIONS = [("E", "Exhibit"), ("I", "Invoice"), ("P", "Purchase Order")]
 
 LIEN_RELEASE_OPTIONS = [("F", "Final"), ("C", "Conditional"), ("N", "N/A")]
 
@@ -126,6 +126,11 @@ class Subgroup(models.Model):
 
 class Report(models.Model):
     name = models.CharField(max_length=150)
+
+class GeneratedReport(models.Model):
+    name = models.CharField(max_length=150)
+    date = models.DateTimeField('Generated')
+    pdf = models.FileField(upload_to='projectmanagement/reports/', default=None)
 
 class Subcontractor(models.Model):
     name = models.CharField(max_length=50)
@@ -212,6 +217,9 @@ class Estimate(models.Model):
         return ""
 
 class EstimateLineItem(models.Model):
+    project_id = models.ForeignKey(Project, on_delete=models.CASCADE)
+    sub_id = models.ForeignKey(Subcontractor, on_delete=models.CASCADE, blank=True, null=True)
+    vendor_id = models.ForeignKey(Vendor, on_delete=models.CASCADE, blank=True, null=True)
     group_id = models.ForeignKey(Group, on_delete=models.CASCADE, blank=True, null=True)
     subgroup_id = models.ForeignKey(Subgroup, on_delete=models.CASCADE, blank=True, null=True)
     scope = models.CharField(max_length=500)
@@ -246,6 +254,7 @@ class Exhibit(models.Model):
         return self.name
 
 class ExhibitLineItem(models.Model):
+    exhibit_id = models.ForeignKey(Exhibit, on_delete=models.CASCADE)
     project_id = models.ForeignKey(Project, on_delete=models.CASCADE)
     sub_id = models.ForeignKey(Subcontractor, on_delete=models.CASCADE, blank=True, null=True)
     vendor_id = models.ForeignKey(Vendor, on_delete=models.CASCADE, blank=True, null=True)

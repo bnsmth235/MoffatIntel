@@ -3,7 +3,6 @@ import time
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
-from datetime import datetime
 from django.core.files.uploadedfile import UploadedFile
 from ..forms import DocumentForm
 from ..models import *
@@ -22,7 +21,7 @@ def all_plans(request, project_id):
 
 
 @login_required(login_url='projectmanagement:login')
-def plan_view(plan_id):
+def plan_view(request, plan_id):
     plan = get_object_or_404(Plan, pk=plan_id)
     pdf_bytes = plan.pdf.read()
 

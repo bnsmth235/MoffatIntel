@@ -5,9 +5,17 @@ from django.conf import settings
 from django.core.files.base import ContentFile
 from datetime import datetime
 from fpdf import FPDF
-from ..models import Exhibit, ExhibitLineItem
+from ..models import Estimate, EstimateLineItem
 
-def create_exhibit(exhibit, line_items, project, sub):
+def create_estimate(line_items, project, sub):
+    estimates = Estimate.objects.order_by("-date").filter(project_id=project).filter(sub_id=sub)
+
+    estimate = Estimate()
+    estimate.name = "Estimate " + chr(len(estimates) + 65)
+    estimate.date = datetime.now().strftime('%Y-%m-%d')
+    estimate.sub_id = sub
+    estimate.project_id = project
+
     group_data = []
     total_total = 0.00
 
@@ -40,7 +48,7 @@ def create_exhibit(exhibit, line_items, project, sub):
                 'rows': [row_data]
             })
 
-    file_name = exhibit.name + " " + str(exhibit.date)
+    file_name = estimate.name + " " + str(estimate.date)
 
     if os.path.exists(file_name + ".pdf"):
         print("***********Check 4**********")
@@ -54,7 +62,7 @@ def create_exhibit(exhibit, line_items, project, sub):
     pdf = FPDF()
 
     # Set up the PDF document
-    pdf.set_title("Scope & Values - Exhibit")
+    pdf.set_title("Scope & Values - Estimate")
     pdf.set_author("Moffat Construction")
     pdf.set_font("Arial", size=10)
 
@@ -72,7 +80,7 @@ def create_exhibit(exhibit, line_items, project, sub):
 
     pdf.set_font("Arial", style="B", size=10)
     pdf.set_line_width(.75)
-    pdf.cell(pdf.w - 20, 5, f"SCOPE & VALUES - {exhibit.name}", 1, 0, align="C")
+    pdf.cell(pdf.w - 20, 5, f"SCOPE & VALUES - EXHIBIT {chr(len(estimates) + 65)}", 1, 0, align="C")
     pdf.ln(10)
 
     pdf.set_font("Arial", size=10)
@@ -190,17 +198,17 @@ def create_exhibit(exhibit, line_items, project, sub):
             pdf.set_fill_color(255 if index % 2 == 0 else 240)
             pdf.set_font('Arial', size=10)
             pdf.cell((pdf.w - 20) * .075, 5, str(index + 1), 1, 0, 'C', True)
-            pdf.cell((pdf.w - 20) * .475, 5, scope, 1, 0, 'R', True)
-            pdf.cell((pdf.w - 20) * .15, 5, "$" + unit_price, 1, 0, 'R', True)
+            pdf.cell((pdf.w - 20) * .475, 5, scope, 1, 0, 'L', True)
+            pdf.cell((pdf.w - 20) * .15, 5, "$" + unit_price, 1, 0, 'L', True)
             pdf.cell((pdf.w - 20) * .1, 5, qty, 1, 0, 'C', True)
-            pdf.cell((pdf.w - 20) * .2, 5, "$" + "{:.2f}".format(total_price), 1, 1, 'R', True)
+            pdf.cell((pdf.w - 20) * .2, 5, "$" + "{:.2f}".format(total_price), 1, 1, 'L', True)
             group_subtotal += float(total_price)
 
         # Add a break after each group
         pdf.set_fill_color(217, 225, 242)
         pdf.set_font('Arial', style='B', size=10)
         pdf.cell((pdf.w - 20) * .8, 5, group_name + " Subtotal: ", 1, 0, 'R', True)
-        pdf.cell((pdf.w - 20) * .2, 5, " $" + str(group_subtotal), 1, 1, 'R', True)
+        pdf.cell((pdf.w - 20) * .2, 5, " $" + str(group_subtotal), 1, 1, 'L', True)
         total_total += group_subtotal
         pdf.ln(5)
 
@@ -209,55 +217,14 @@ def create_exhibit(exhibit, line_items, project, sub):
     pdf.set_fill_color(192)
     pdf.set_font('Arial', style='B', size=10)
     pdf.cell((pdf.w - 20) * .8, 5, group_name + " Total Contracted Amount: ", 1, 0, 'R', True)
-    pdf.cell((pdf.w - 20) * .2, 5, " $" + str(total_total), 1, 1, 'R', True)
+    pdf.cell((pdf.w - 20) * .2, 5, " $" + str(total_total), 1, 1, 'L', True)
 
     pdf.ln(15)
 
     if pdf.get_y() + 65 > pdf.page_break_trigger:
         pdf.add_page()
 
-    pdf.set_fill_color(255)
-    pdf.cell(pdf.w - 20, 5, "Signatures", 1, 1, "C", True)
-
-    table_data = [
-        ["Moffat Construction", sub.name],
-        ["Signature", "Signature"],
-        ["Date", "Date"],
-        ["Printed Name", "Printed Name"],
-        ["Greg Moffat", ""],
-        ["Title/Position", "Title/Position"],
-        ["General Contractor", ""]
-    ]
-
-    # Loop through rows and columns to create table
-    for row in table_data:
-        for col, cell_data in enumerate(row):
-            if table_data.index(row) == 0:
-                pdf.set_xy(x + (col * col_width), pdf.get_y())
-                pdf.set_font("Arial", size=8)
-                pdf.cell(col_width, 5, cell_data, 1, 0, "C")
-            elif "Signature" in cell_data:
-                pdf.set_xy(x + (col * col_width), pdf.get_y())
-                pdf.set_font("Arial", size=8)
-                pdf.cell(col_width, 12, cell_data + " \n\n\n\n\n\n\n", 1, 0, "L")
-            elif cell_data == "" or cell_data == "Greg Moffat" or table_data.index(row) == 6:
-                pdf.set_font("Arial", size=12)
-                pdf.set_xy(x + (col * col_width), pdf.get_y())
-                pdf.cell(col_width, 12, cell_data, 1, 0, "C")
-            else:
-                # Add cell without borders
-                pdf.set_font("Arial", size=8)
-                pdf.set_xy(x + (col * col_width), pdf.get_y())
-                pdf.cell(col_width, 5, cell_data, 1, 0, "L")
-
-            # Reset font and text color
-            pdf.set_font("Arial", size=10)
-            pdf.set_text_color(0)
-
-        # Move to next row
-        pdf.ln()
-
-    exhibit.total = total_total
+    estimate.total = total_total
 
     # Generate the full file path
     temp_file = tempfile.NamedTemporaryFile(delete=False, suffix=".pdf")
@@ -269,7 +236,7 @@ def create_exhibit(exhibit, line_items, project, sub):
 
     file_data = ContentFile(file_content)
 
-    exhibit.pdf.save(file_name, file_data)
+    estimate.pdf.save(file_name, file_data)
 
     # Delete the temporary file
     temp_file.close()
@@ -277,6 +244,6 @@ def create_exhibit(exhibit, line_items, project, sub):
 
     project.date = datetime.now()
     project.save()
-    exhibit.save()
+    estimate.save()
 
-    return exhibit
+    return estimate

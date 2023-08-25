@@ -741,6 +741,15 @@ def new_exhibit(request, project_id, sub_id):
          groups])
 
     if request.method == 'POST':
+        exhibits = Exhibit.objects.order_by("-date").filter(project_id=project).filter(sub_id=sub)
+
+        exhibit = Exhibit()
+        exhibit.name = "Exhibit " + chr(len(exhibits) + 65)
+        exhibit.date = datetime.now().strftime('%Y-%m-%d')
+        exhibit.sub_id = sub
+        exhibit.project_id = project
+        exhibit.save()
+
         line_items = process_form_data(request, project, sub)
         for line_item in line_items:
             line_item.project_id = project
@@ -750,9 +759,10 @@ def new_exhibit(request, project_id, sub_id):
             except:
                 line_item.vendor_id = sub
                 line_item.sub_id = None
+            line_item.exhibit_id = exhibit
             line_item.save()
 
-        exhibit = create_exhibit(line_items, project, sub)
+        exhibit = create_exhibit(exhibit, line_items, project, sub)
 
 
         return redirect('projectmanagement:contract_view', project_id=project.id, sub_id=sub.id)

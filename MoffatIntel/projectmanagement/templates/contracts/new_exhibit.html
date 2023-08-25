@@ -212,7 +212,7 @@ function handleGroupSelectChange(event) {
     const groupIndex = parseInt(event.target.getAttribute('data-group-index'));
     console.log("Selected Group Index:", groupIndex);
 
-    const selectedGroupIndex = vm.groups[groupIndex].selectedGroupIndex - 4;
+    const selectedGroupIndex = vm.groups[groupIndex].selectedGroupIndex - 1;
     console.log("Selected Group Index in groups array:", selectedGroupIndex);
 
     const groupSelect = event.target;

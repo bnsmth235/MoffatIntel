@@ -1,8 +1,14 @@
 import json
+import os
+import time
+
 from django.contrib.auth.decorators import login_required
 from django.db.models import Sum
 from django.shortcuts import render, redirect, get_object_or_404
 from datetime import datetime
+
+from django.utils.baseconv import base64
+
 from ..models import *
 
 @login_required(login_url='projectmanagement:login')
@@ -151,9 +157,17 @@ def new_invoice(request, project_id, draw_id):
     vendors = Vendor.objects.order_by('name')
     groups = Group.objects.filter(project_id=project)
     subgroups = Subgroup.objects.filter(group_id__in=groups)
+    exhibits = Exhibit.objects.filter(project_id=project)
+    line_items = ExhibitLineItem.objects.filter(exhibit_id__in=exhibits)
 
     groups_json = json.dumps(
         [{'id': group.id, 'subgroups': list(subgroups.filter(group_id=group.id).values('id', 'name'))} for group in groups])
+
+    exhibits_json = json.dumps(
+        [{'id': exhibit.id, 'name': exhibit.name, 'sub_id': exhibit.sub_id.id} for exhibit in exhibits]
+    )
+
+    line_items_json = json.dumps([{'id': item.id, 'exhibit_id': item.exhibit_id.id, 'total': item.total} for item in line_items])
 
     context = {
         'subs': subs,
@@ -161,8 +175,12 @@ def new_invoice(request, project_id, draw_id):
         'project': project,
         'groups': groups,
         'groups_json': groups_json,
+        'exhibits_json': exhibits_json,
+        'line_items_json': line_items_json,
         'subgroups': subgroups,
         'draw': draw,
+        'exhibits': exhibits,
+        'line_items': line_items,
         'method_choices': METHOD_OPTIONS,
     }
 
@@ -201,6 +219,7 @@ def new_invoice(request, project_id, draw_id):
             return render(request, 'draws/new_invoice.html', context)
 
         invoice = Invoice()
+        invoice.date = datetime.now()
         invoice.draw_id = draw
         invoice.invoice_date = invoice_date
         invoice.invoice_num = invoice_num

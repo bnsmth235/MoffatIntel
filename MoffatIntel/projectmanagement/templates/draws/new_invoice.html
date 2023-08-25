@@ -15,72 +15,6 @@
             {% endif %}
 
             <div style="display: inline-block">
-                <label for="invoice_date">Invoice Date:</label>
-                <input type="date" name="invoice_date" id="invoice_date" class="input-field" {% if error_message %} value="{{invoice_date}}" {% endif %}>
-            </div>
-
-            <div style="display: inline-block">
-                <label for="invoice_num">Invoice Number:</label>
-                <input type="text" name="invoice_num" id="invoice_num" class="input-field" {% if error_message %} value="{{invoice_num}}" {% endif %}>
-            </div>
-
-            <div style="display: inline-block">
-                <label for="csi">CSI Division:</label>
-                <select name="csi" id="csi" class="input-field">
-                    <option value="1">General Requirement</option>
-                    <option value="2">Site Works</option>
-                    <option value="3">Concrete</option>
-                    <option value="4">Masonry</option>
-                    <option value="5">Metals</option>
-                    <option value="6">Wood and Plastics</option>
-                    <option value="7">Thermal and Moisture Protection</option>
-                    <option value="8">Doors and Windows</option>
-                    <option value="9">Finishes</option>
-                    <option value="10">Specialties</option>
-                    <option value="11">Equipment</option>
-                    <option value="12">Furnishings</option>
-                    <option value="13">Special Construction</option>
-                    <option value="14">Conveying Systems</option>
-                    <option value="15">Mechanical/Plumbing</option>
-                    <option value="16">Electrical</option>
-                </select>
-            </div>
-
-            <div style="display: inline-block">
-                <label for="category">Category:</label>
-                <select name="category" id="category" class="input-field">
-                    <option value="1">Civil Engineering</option>
-                    <option value="2">Architecture</option>
-                    <option value="3">Electrical Engineering</option>
-                    <option value="4">Mechanical Engineering</option>
-                    <option value="5">Plumbing</option>
-                    <option value="6">Environmental</option>
-                    <option value="7">Health Department</option>
-                    <option value="8">Amenities</option>
-                    <option value="9">Landscape</option>
-                </select>
-            </div>
-
-            <div style="display: inline-block">
-                <label for="groupSelect">Group:</label>
-                <select class="input-field" name="group" id="groupSelect">
-                    {% for group in groups %}
-                        <option value="{{group.id}}">{{group.name}}</option>
-                    {% endfor %}
-                    <option value="None">None</option>
-                </select>
-            </div>
-
-            <div style="display: inline-block">
-                <label for="subgroupSelect">Subgroup:</label>
-                <select class="input-field" name="subgroup" id="subgroupSelect">
-                    <option value="None">None</option>
-                    <!-- Options will be dynamically added here using JavaScript -->
-                </select>
-            </div>
-
-
-            <div style="display: inline-block">
                 <label for="method">Method:</label>
                 <select name="method" id="method" class="input-field">
                     {% for choice in method_choices %}
@@ -90,38 +24,207 @@
                 </select>
             </div>
 
-            <div style="display: inline-block">
-                <label for="subven">Vendor/Subcontractor: </label>
-                <select name="subven" id="subven" class="input-field">
-                    {% for sub in subs %}
-                        <option value="{{ sub.name }}">{{ sub.name }}</option>
-                    {% endfor %}
-                    {% for vendor in vendors %}
-                        <option value="{{ vendor.name }}">{{ vendor.name }}</option>
-                    {% endfor %}
-                </select>
+            <div id="invoiceDiv" style="display: none">
+                <input hidden="hidden" name="type" id="type" value="invoice">
+                <div style="display: inline-block">
+                    <label for="invoice_date">Invoice Date:</label>
+                    <input type="date" name="date" id="invoice_date" class="input-field" {% if error_message %} value="{{invoice_date}}" {% endif %}>
+                </div>
+
+                <div style="display: inline-block">
+                    <label for="invoice_num">Invoice Number:</label>
+                    <input type="text" name="num" id="invoice_num" class="input-field" {% if error_message %} value="{{invoice_num}}" {% endif %}>
+                </div>
+
+                <div style="display: inline-block">
+                    <label for="csi">CSI Division:</label>
+                    <select name="csi" id="csi" class="input-field">
+                        <option value="1">General Requirement</option>
+                        <option value="2">Site Works</option>
+                        <option value="3">Concrete</option>
+                        <option value="4">Masonry</option>
+                        <option value="5">Metals</option>
+                        <option value="6">Wood and Plastics</option>
+                        <option value="7">Thermal and Moisture Protection</option>
+                        <option value="8">Doors and Windows</option>
+                        <option value="9">Finishes</option>
+                        <option value="10">Specialties</option>
+                        <option value="11">Equipment</option>
+                        <option value="12">Furnishings</option>
+                        <option value="13">Special Construction</option>
+                        <option value="14">Conveying Systems</option>
+                        <option value="15">Mechanical/Plumbing</option>
+                        <option value="16">Electrical</option>
+                    </select>
+                </div>
+
+                <div style="display: inline-block">
+                    <label for="category">Category:</label>
+                    <select name="category" id="category" class="input-field">
+                        <option value="1">Civil Engineering</option>
+                        <option value="2">Architecture</option>
+                        <option value="3">Electrical Engineering</option>
+                        <option value="4">Mechanical Engineering</option>
+                        <option value="5">Plumbing</option>
+                        <option value="6">Environmental</option>
+                        <option value="7">Health Department</option>
+                        <option value="8">Amenities</option>
+                        <option value="9">Landscape</option>
+                    </select>
+                </div>
+
+                <div style="display: inline-block">
+                    <label for="groupSelect">Group:</label>
+                    <select class="input-field" name="group" id="groupSelect">
+                        {% for group in groups %}
+                            <option value="{{group.id}}">{{group.name}}</option>
+                        {% endfor %}
+                        <option value="None">None</option>
+                    </select>
+                </div>
+
+                <div style="display: inline-block">
+                    <label for="subgroupSelect">Subgroup:</label>
+                    <select class="input-field" name="subgroup" id="subgroupSelect">
+                        <option value="None">None</option>
+                        <!-- Options will be dynamically added here using JavaScript -->
+                    </select>
+                </div>
+
+
+                <div style="display: inline-block">
+                    <label for="subven">Vendor/Subcontractor: </label>
+                    <select name="subven" id="subven" class="input-field">
+                        {% for sub in subs %}
+                            <option value="{{ sub.id }}">{{ sub.name }}</option>
+                        {% endfor %}
+                        {% for vendor in vendors %}
+                            <option value="{{ vendor.id }}">{{ vendor.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div style="display: inline-block">
+                    <label for="invoice_total">Invoice Total: $</label>
+                    <input type="number" min="0" step=".01" name="invoice_total" id="invoice_total" class="input-field"  {% if error_message %} value="{{invoice_total}}" {% endif %}>
+                </div>
+
+                <div style="display: inline-block">
+                    <label for="description">Description:</label>
+                    <input type="text" name="description" id="description" class="input-field" style="width: 800px"  {% if error_message %} value="{{description}}" {% endif %}>
+                </div>
+                <br><br>
+                <div style="display: inline-block">
+                    <label style="position: relative">Invoice PDF: </label>
+                    <input type="file" name="invoice_pdf" id="invoice_pdf">
+                </div>
+
             </div>
 
-            <div style="display: inline-block">
-                <label for="invoice_total">Invoice Total: $</label>
-                <input type="number" min="0" step=".01" name="invoice_total" id="invoice_total" class="input-field"  {% if error_message %} value="{{invoice_total}}" {% endif %}>
+            <div id="exhibitDiv" style="display: block;">
+                <input hidden="hidden" name="type" value="exhibit">
+
+                <div style="display: inline-block">
+                    <label for="subven">Subcontractor: </label>
+                    <select name="subven" id="sub" class="input-field">
+                        <option></option>
+                        {% for sub in subs %}
+                            <option value="{{ sub.id }}">{{ sub.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div style="display: inline-block">
+                    <label for="subven">Exhibit: </label>
+                    <select name="exhibit" id="exhibit" class="input-field">
+                        <option></option>
+                        <!-- Options will be dynamically added here using JavaScript -->
+                    </select>
+                </div>
+
+                <div style="display: inline-block">
+                    <label for="">Item: </label>
+                    <select name="line_item" id="line_item" class="input-field">
+
+                    </select>
+                </div>
+
+
+                <input hidden="hidden" name="date" value="exhibit">
+
+                <div style="display: inline-block"></div>
             </div>
 
-            <div style="display: inline-block">
-                <label for="description">Description:</label>
-                <input type="text" name="description" id="description" class="input-field" style="width: 800px"  {% if error_message %} value="{{description}}" {% endif %}>
-            </div>
-            <br><br>
-            <div style="display: inline-block">
-                <label style="position: relative">Invoice PDF: </label>
-                <input type="file" name="invoice_pdf" id="invoice_pdf">
+            <!-- Purchase Order Div -->
+            <div id="purchase_orderDiv" style="display: none;">
+                <input hidden="hidden" name="type" value="purchase_order">
+                <div style="display: inline-block">
+                    <label for="subven">Vendor: </label>
+                    <select name="subven" id="ven" class="input-field">
+                        {% for vendor in vendors %}
+                            <option value="{{ vendor.id }}">{{ vendor.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
             </div>
 
             <input class="input-field-save" type="submit" name="submit" value="Save">
-
         </fieldset>
     </form>
 
+<script>
+    const subSelect = document.getElementById('sub');
+    const exhibitSelect = document.getElementById('exhibit');
+    const lineItemSelect = document.getElementById('line_item');
+    const exhibits = JSON.parse('{{ exhibits_json | escapejs }}'); // Replace with your actual JSON data
+    const line_items = JSON.parse('{{ line_items_json | escapejs }}');
+
+    subSelect.addEventListener('change', () => {
+        const selectedSub = subSelect.value;
+        exhibitSelect.innerHTML = ''; // Clear the existing options
+
+        exhibitSelect.appendChild(document.createElement('option'));
+        exhibits.forEach(exhibit => {
+            if (exhibit.sub_id == selectedSub) {
+                const option = document.createElement('option');
+                option.value = exhibit.id;
+                option.textContent = exhibit.name;
+                exhibitSelect.appendChild(option);
+            }
+        });
+    });
+
+    exhibitSelect.addEventListener('change', () => {
+        const selectedExhibit = exhibitSelect.value;
+        lineItemSelect.innerHTML = '';
+
+        lineItemSelect.appendChild(document.createElement('option'));
+        line_items.forEach(line_item => {
+            if(line_item.exhibit_id == selectedExhibit){
+                const option = document.createElement('option');
+                option.value = line_item.id;
+                option.textContent = "$" + line_item.total.toFixed(2);
+                lineItemSelect.appendChild(option)
+            }
+        });
+
+
+    });
+</script>
+
+<script>
+    const methodSelect = document.getElementById('method');
+    const exhibitDiv = document.getElementById('exhibitDiv');
+    const purchaseOrderDiv = document.getElementById('purchase_orderDiv');
+    const invoiceDiv = document.getElementById('invoiceDiv');
+
+    methodSelect.addEventListener('change', () => {
+        const selectedMethod = methodSelect.value;
+        exhibitDiv.style.display = selectedMethod === 'E' ? 'block' : 'none';
+        purchaseOrderDiv.style.display = selectedMethod === 'P' ? 'block' : 'none';
+        invoiceDiv.style.display = selectedMethod === 'I' ? 'block' : 'none';
+    });
+</script>
 
 <script>
     const groupSelect = document.getElementById('groupSelect');
