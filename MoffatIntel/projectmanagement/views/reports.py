@@ -35,31 +35,31 @@ def reports(request):
 
 
 @login_required(login_url='projectmanagement:login')
-def new_draw_report_by_sub(request, project, sub):
-    project = get_object_or_404(Project, pk=project)
+def new_draw_report_by_sub(request, project_id, sub_id):
+    project = get_object_or_404(Project, pk=project_id)
     sub = None
     vendor = None
     checks = None
     invoices = None
 
     try:
-        sub = get_object_or_404(Subcontractor, pk=sub)
+        sub = get_object_or_404(Subcontractor, pk=sub_id)
     except:
-        vendor = get_object_or_404(Vendor, pk=sub)
+        vendor = get_object_or_404(Vendor, pk=sub_id)
 
     if sub:
-        invoices = Invoice.objects.filter(sub=sub)
-        checks = Check.objects.filter(invoice__in=invoices)
+        invoices = Invoice.objects.filter(sub_id=sub)
+        checks = Check.objects.filter(invoice_id__in=invoices)
     elif vendor:
-        invoices = Invoice.objects.filter(vendor=vendor)
-        checks = Check.objects.filter(invoice__in=invoices)
+        invoices = Invoice.objects.filter(vendor_id=vendor)
+        checks = Check.objects.filter(invoice_id__in=invoices)
     else:
         redirect('projectmanagement:reports')
 
-    exhibits = Exhibit.objects.filter(project=project, sub=sub)
-    groups = Group.objects.filter(project=project)
-    draws = Draw.objects.filter(project=project)
-    line_items = ExhibitLineItem.objects.filter(exhibit__in=exhibits)
+    exhibits = Exhibit.objects.filter(project_id=project, sub_id=sub)
+    groups = Group.objects.filter(project_id=project)
+    draws = Draw.objects.filter(project_id=project)
+    line_items = ExhibitLineItem.objects.filter(exhibit_id__in=exhibits)
 
     report = create_draw_report_by_sub(project, draws, sub, vendor, checks, invoices, exhibits, line_items, groups)
     pdf_bytes = report.pdf.read()
