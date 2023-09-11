@@ -1,9 +1,12 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
+from django.views.decorators.csrf import csrf_protect
+
 from ..models import Vendor, Subcontractor
 
 @login_required(login_url='projectmanagement:login')
+@csrf_protect
 def all_vendors(request):
     vendors = Vendor.objects.order_by("name")
     if request.method == 'POST':
@@ -61,6 +64,7 @@ def all_vendors(request):
 
 
 @login_required(login_url='projectmanagement:login')
+@csrf_protect
 def all_subs(request):
     subs = Subcontractor.objects.order_by("name")
     if request.method == 'POST':
@@ -107,11 +111,13 @@ def all_subs(request):
 
 
 @login_required(login_url='projectmanagement:login')
+@csrf_protect
 def input_data(request):
     return render(request, 'data/input_data.html')
 
 
 @login_required(login_url='projectmanagement:login')
+@csrf_protect
 def edit_sub(request, sub_id):
     sub = get_object_or_404(Subcontractor, pk=sub_id)
     if request.method == 'POST':
@@ -165,6 +171,7 @@ def edit_sub(request, sub_id):
     return render(request, 'data/edit_sub.html', {'sub': sub})
 
 @login_required(login_url='projectmanagement:login')
+@csrf_protect
 def delete_sub(request, sub_id):
     if request.method == 'POST':
         username = request.POST.get('username')
@@ -181,6 +188,7 @@ def delete_sub(request, sub_id):
 
 
 @login_required(login_url='projectmanagement:login')
+@csrf_protect
 def edit_vendor(request, vendor_id):
     vendor = get_object_or_404(Vendor, pk=vendor_id)
     if request.method == 'POST':
@@ -209,6 +217,7 @@ def edit_vendor(request, vendor_id):
 
 
 @login_required(login_url='projectmanagement:login')
+@csrf_protect
 def delete_vendor(request, vendor_id):
     if request.method == 'POST':
         username = request.POST.get('username')

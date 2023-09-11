@@ -9,7 +9,8 @@ from ..models import GeneratedReport
 
 
 def create_draw_report_by_sub(project, draws, sub, vendor, checks, invoices, exhibits, line_items, groups):
-    if not project or not draws or not (sub or vendor) or not checks or not invoices or not exhibits or not groups:
+    print(sub or vendor)
+    if not project or not draws or not (sub or vendor) or not invoices or not exhibits:
         pdf = FPDF()
         pdf.add_page()
         pdf.set_font("Arial", size=20)

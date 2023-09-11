@@ -23,9 +23,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-z1k40au3dgc0sq-_0^509ksf$uc-yi+yfs=^vi0e==au%y0^re'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'localhost',
+    'moffatintel.com',
+    'www.moffatintel.com',
+    'http://www.moffatintel.com',
+]
 
 
 # Application definition
@@ -51,6 +56,8 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'MoffatIntel.urls'
+
+CSRF_TRUSTED_ORIGINS = ['http://moffatintel.com']
 
 TEMPLATES = [
     {

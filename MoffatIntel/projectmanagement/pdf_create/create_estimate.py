@@ -5,17 +5,8 @@ from django.conf import settings
 from django.core.files.base import ContentFile
 from datetime import datetime
 from fpdf import FPDF
-from ..models import Estimate, EstimateLineItem
 
-def create_estimate(line_items, project, sub):
-    estimates = Estimate.objects.order_by("-date").filter(project_id=project).filter(sub_id=sub)
-
-    estimate = Estimate()
-    estimate.name = "Estimate " + chr(len(estimates) + 65)
-    estimate.date = datetime.now().strftime('%Y-%m-%d')
-    estimate.sub_id = sub
-    estimate.project_id = project
-
+def create_estimate(estimate, line_items, project, sub, vendor):
     group_data = []
     total_total = 0.00
 
@@ -80,7 +71,7 @@ def create_estimate(line_items, project, sub):
 
     pdf.set_font("Arial", style="B", size=10)
     pdf.set_line_width(.75)
-    pdf.cell(pdf.w - 20, 5, f"SCOPE & VALUES - EXHIBIT {chr(len(estimates) + 65)}", 1, 0, align="C")
+    pdf.cell(pdf.w - 20, 5, f"SCOPE & VALUES - ESTIMATE", 1, 0, align="C")
     pdf.ln(10)
 
     pdf.set_font("Arial", size=10)
@@ -127,8 +118,8 @@ def create_estimate(line_items, project, sub):
 
     table_data = [
         ["Trade:", "Schedule"],
-        [sub.name, "Start Date:"],
-        [sub.address, "End Date:                                         Duration:"],
+        [sub.name if sub else vendor.name, "Start Date:"],
+        [sub.address if sub else vendor.address, "End Date:                                         Duration:"],
         ["Project: " + project.name, "Start Date Punch List Fixes:"],
         ["Address: " + project.address, "End Date Punch List Fixes:              Duration:"],
         ["City, State, Zip: " + project.city + ", " + project.state + ", " + str(project.zip),
@@ -148,7 +139,7 @@ def create_estimate(line_items, project, sub):
     for row in table_data:
         print("***********Check 6**********")
         for col, cell_data in enumerate(row):
-            if col == 0 and sub.name in cell_data or sub.address in cell_data or "Schedule" in cell_data:
+            if col == 0 and (sub.name in cell_data or sub.address in cell_data or "Schedule" in cell_data or vendor.name in cell_data or vendor.address in cell_data):
                 pdf.set_xy(x + (col * col_width), pdf.get_y())
                 pdf.set_font("Arial", style="B", size=10)
                 pdf.cell(col_width, 5, cell_data, 1, 0, "C")

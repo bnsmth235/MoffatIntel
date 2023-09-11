@@ -216,6 +216,7 @@ class Estimate(models.Model):
                 return choice[1]
         return ""
 
+
 class EstimateLineItem(models.Model):
     project_id = models.ForeignKey(Project, on_delete=models.CASCADE)
     sub_id = models.ForeignKey(Subcontractor, on_delete=models.CASCADE, blank=True, null=True)
@@ -223,12 +224,13 @@ class EstimateLineItem(models.Model):
     group_id = models.ForeignKey(Group, on_delete=models.CASCADE, blank=True, null=True)
     subgroup_id = models.ForeignKey(Subgroup, on_delete=models.CASCADE, blank=True, null=True)
     scope = models.CharField(max_length=500)
-    qty = models.IntegerField()
-    unit_price = models.FloatField()
-    total = models.FloatField()
+    qty = models.IntegerField(blank=True, null=True)
+    unit_price = models.FloatField(blank=True, null=True)
+    total = models.FloatField(blank=True, null=True)
 
     def __str__(self):
         return self.scope
+
 
 class SWO(models.Model):
     date = models.DateTimeField('Last Modified')
@@ -257,7 +259,6 @@ class ExhibitLineItem(models.Model):
     exhibit_id = models.ForeignKey(Exhibit, on_delete=models.CASCADE)
     project_id = models.ForeignKey(Project, on_delete=models.CASCADE)
     sub_id = models.ForeignKey(Subcontractor, on_delete=models.CASCADE, blank=True, null=True)
-    vendor_id = models.ForeignKey(Vendor, on_delete=models.CASCADE, blank=True, null=True)
     group_id = models.ForeignKey(Group, on_delete=models.CASCADE, blank=True, null=True)
     subgroup_id = models.ForeignKey(Subgroup, on_delete=models.CASCADE, blank=True, null=True)
     scope = models.CharField(max_length=500)

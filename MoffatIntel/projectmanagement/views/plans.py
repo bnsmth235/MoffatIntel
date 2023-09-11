@@ -4,11 +4,14 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.core.files.uploadedfile import UploadedFile
+from django.views.decorators.csrf import csrf_protect
+
 from ..forms import DocumentForm
 from ..models import *
 
 
 @login_required(login_url='projectmanagement:login')
+@csrf_protect
 def all_plans(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
     form = DocumentForm(request.POST, request.FILES)
@@ -21,6 +24,7 @@ def all_plans(request, project_id):
 
 
 @login_required(login_url='projectmanagement:login')
+@csrf_protect
 def plan_view(request, plan_id):
     plan = get_object_or_404(Plan, pk=plan_id)
     pdf_bytes = plan.pdf.read()
@@ -33,6 +37,7 @@ def plan_view(request, plan_id):
 
 
 @login_required(login_url='projectmanagement:login')
+@csrf_protect
 def upload_plan(request, project_id):
     if request.method == 'POST':
         form = DocumentForm(request.POST, request.FILES)
@@ -65,6 +70,7 @@ def upload_plan(request, project_id):
 
 
 @login_required(login_url='projectmanagement:login')
+@csrf_protect
 def delete_plan(request, project_id):
     if request.method == 'POST':
         plan_id = request.POST.get('plan_id')

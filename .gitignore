@@ -10,3 +10,4 @@ __pycache__
 MoffatIntel/files/*
 qodana.yaml
 
+/MoffatIntel/static/

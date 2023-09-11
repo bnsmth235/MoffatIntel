@@ -33,43 +33,49 @@
                     <td></td>
                 </tr>
                 {% regroup estimates by csi as estimate_groups %}
-                {% for csi in estimate_groups %}
-                    {% if csi is division.id %}
-                        {% for estimate in csi.list %}
-                            <tr>
-                                <td width="6%">
-                                    <a href="{% url 'projectmanagement:estimate_pdf_view' estimate.id %}">
-                                        <img src="{% static 'projectmanagement/images/pdf_icon.png' %}" height="18px" width="auto"
-                                            style="margin-bottom: -4px;margin-left:5px">
-                                    </a>
-                                </td>
-                                <td>{{sub.name}}</td>
-                                <td>{{sub.get_long_category}}</td>
-                                <td>{{estimate.date}}</td>
-                                <td>{{estimate.amount}}</td>
-                                <td width="5%" style="text-align: center">
-                                    <a href="{% url 'projectmanagement:edit_estimate' estimate.id%}">
-                                        <img src="{% static 'projectmanagement/images/pencil.png' %}" height="18px" width="auto"
-                                            style="margin-bottom: -4px; margin-right: 2px"> Edit
-                                    </a>
-                                </td>
-                                <td width="5%" style="text-align: center">
-                                    <form id="delete-form" method="post"
-                                        data-delete-url="{% url 'projectmanagement:delete_estimate' estimate.id%}">
-                                        {% csrf_token %}
-                                        <input type="hidden" name="estimate_id" value="{{ estimate.id }}">
-                                        <input type="hidden" name="username" id="username">
-                                        <button class="inline-delete-button" type="button" onclick="deleteConfirmation(this)">
-                                            <img src="{% static 'projectmanagement/images/trash.png' %}" height="15px" width="auto"> Delete
-                                        </button>
-                                    </form>
-                                </td>
-                                <td>
-                                    <a href="#">Accept Bid</a>
-                                </td>
+                    {% for csi in estimate_groups %}
+                        {% if csi.grouper == division.id %}
+                            {% if csi.list|length > 0 %}
+                                {% for estimate in csi.list %}
+                                <tr>
+                                    <td width="6%">
+                                        <a href="{% url 'projectmanagement:estimate_pdf_view' estimate.id %}">
+                                            <img src="{% static 'projectmanagement/images/pdf_icon.png' %}" height="18px" width="auto"
+                                                style="margin-bottom: -4px;margin-left:5px">
+                                        </a>
+                                    </td>
+                                    <td>{{sub.name}}</td>
+                                    <td>{{sub.get_long_category}}</td>
+                                    <td>{{estimate.date}}</td>
+                                    <td>{{estimate.amount}}</td>
+                                    <td width="5%" style="text-align: center">
+                                        <a href="{% url 'projectmanagement:edit_estimate' estimate.id%}">
+                                            <img src="{% static 'projectmanagement/images/pencil.png' %}" height="18px" width="auto"
+                                                style="margin-bottom: -4px; margin-right: 2px"> Edit
+                                        </a>
+                                    </td>
+                                    <td width="5%" style="text-align: center">
+                                        <form id="delete-form" method="post"
+                                            data-delete-url="{% url 'projectmanagement:delete_estimate' estimate.id%}">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="estimate_id" value="{{ estimate.id }}">
+                                            <input type="hidden" name="username" id="username">
+                                            <button class="inline-delete-button" type="button" onclick="deleteConfirmation(this)">
+                                                <img src="{% static 'projectmanagement/images/trash.png' %}" height="15px" width="auto"> Delete
+                                            </button>
+                                        </form>
+                                    </td>
+                                    <td>
+                                        <a href="#">Accept Bid</a>
+                                    </td>
 
+                                </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr style="text-align: center">
+                                <td colspan="8">No estimates</td>
                             </tr>
-                        {% endfor %}
+                        {% endif %}
                     {% endif %}
                 {% endfor %}
             </table>

@@ -11,14 +11,16 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.shortcuts import render, redirect, get_object_or_404
 import base64
 import PyPDF2
+from django.views.decorators.csrf import csrf_protect
+
 from ..models import *
 from ..pdf_create.create_change_order import create_change_order
 from ..pdf_create.create_exhibit import create_exhibit
 from ..pdf_create.create_purchase_order import create_purchase_order
-from django.db import transaction
 
 
 @login_required(login_url='projectmanagement:login')
+@csrf_protect
 def contract_view(request, project_id, sub_id):
     project = get_object_or_404(Project, pk=project_id)
     sub = get_object_or_404(Subcontractor, pk=sub_id)
@@ -117,6 +119,7 @@ def contract_view(request, project_id, sub_id):
 
 
 @login_required(login_url='projectmanagement:login')
+@csrf_protect
 def lr_view(request, check_id):
     check = get_object_or_404(Check, pk=check_id)
     pdf_bytes = check.lien_release_pdf.read()
@@ -125,6 +128,7 @@ def lr_view(request, check_id):
 
 
 @login_required(login_url='projectmanagement:login')
+@csrf_protect
 def deductive_change_orders(request, project_id, sub_id):
     project = get_object_or_404(Project, pk=project_id)
     sub = get_object_or_404(Subcontractor, pk=sub_id)
@@ -134,6 +138,7 @@ def deductive_change_orders(request, project_id, sub_id):
 
 
 @login_required(login_url='projectmanagement:login')
+@csrf_protect
 def change_orders(request, project_id, sub_id):
     project = get_object_or_404(Project, pk=project_id)
     sub = get_object_or_404(Subcontractor, pk=sub_id)
@@ -143,6 +148,7 @@ def change_orders(request, project_id, sub_id):
 
 
 @login_required(login_url='projectmanagement:login')
+@csrf_protect
 def purchase_orders(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
     pos = PurchaseOrder.objects.order_by('-date').order_by('vendor_id').filter(project_id=project)
@@ -151,6 +157,7 @@ def purchase_orders(request, project_id):
 
 
 @login_required(login_url='projectmanagement:login')
+@csrf_protect
 def new_change_order(request, project_id=None, sub_id=None):
     projectselect = get_object_or_404(Project, pk=project_id) if project_id else None
     subselect = get_object_or_404(Subcontractor, pk=sub_id) if sub_id else None
@@ -230,6 +237,7 @@ def new_change_order(request, project_id=None, sub_id=None):
 
 
 @login_required(login_url='projectmanagement:login')
+@csrf_protect
 def delete_change_order(request, co_id):
     co = get_object_or_404(ChangeOrder, pk=co_id)
 
@@ -246,6 +254,7 @@ def delete_change_order(request, co_id):
     return redirect('projectmanagement:change_orders', project_id=get_object_or_404(Project, pk=co.project_id), sub_id=get_object_or_404(Subcontractor, pk=co.sub_id))
 
 @login_required(login_url='projectmanagement:login')
+@csrf_protect
 def delete_deductive_change_order(request, dco_id):
     dco = get_object_or_404(DeductiveChangeOrder, pk=dco_id)
     project = dco.project_id
@@ -264,6 +273,7 @@ def delete_deductive_change_order(request, dco_id):
     return redirect('projectmanagement:deductive_change_orders', project.id, sub.id)
 
 @login_required(login_url='projectmanagement:login')
+@csrf_protect
 def delete_purchase_order(request, po_id):
     po = get_object_or_404(PurchaseOrder, pk=po_id)
     project = po.project_id
@@ -282,6 +292,7 @@ def delete_purchase_order(request, po_id):
 
 
 @login_required(login_url='projectmanagement:login')
+@csrf_protect
 def new_deductive_change_order(request, project_id = None, sub_id = None):
     projectselect = get_object_or_404(Project, pk=project_id) if project_id else None
     subselect = get_object_or_404(Subcontractor, pk=sub_id) if sub_id else None
@@ -362,6 +373,7 @@ def new_deductive_change_order(request, project_id = None, sub_id = None):
 
 
 @login_required(login_url='projectmanagement:login')
+@csrf_protect
 def new_contract(request, project_id = None, sub_id = None):
     projects = Project.objects.order_by('name')
     subs = Subcontractor.objects.order_by('name')
@@ -569,6 +581,7 @@ def new_contract(request, project_id = None, sub_id = None):
 
 
 @login_required(login_url='projectmanagement:login')
+@csrf_protect
 def new_purchase_order(request, project_id=None):
     projectselect = get_object_or_404(Project, pk=project_id) if project_id else None
     projects = Project.objects.order_by('name')
@@ -629,6 +642,7 @@ def new_purchase_order(request, project_id=None):
 
 
 @login_required(login_url='projectmanagement:login')
+@csrf_protect
 def delete_contract(request, contract_id):
     contract = get_object_or_404(Contract, pk=contract_id)
     project = contract.project_id
@@ -650,6 +664,7 @@ def delete_contract(request, contract_id):
 
 
 @login_required(login_url='projectmanagement:login')
+@csrf_protect
 def delete_swo(request, swo_id):
     swo = get_object_or_404(SWO, pk=swo_id)
     project = swo.project_id
@@ -676,6 +691,7 @@ def delete_swo(request, swo_id):
 
 
 @login_required(login_url='projectmanagement:login')
+@csrf_protect
 def contract_pdf_view(request, contract_id):
     contract = get_object_or_404(Contract, pk=contract_id)
     pdf_bytes = contract.pdf.read()
@@ -686,6 +702,7 @@ def contract_pdf_view(request, contract_id):
 
 
 @login_required(login_url='projectmanagement:login')
+@csrf_protect
 def swo_pdf_view(request, swo_id):
     swo = get_object_or_404(SWO, pk=swo_id)
     pdf_bytes = swo.pdf.read()
@@ -694,6 +711,7 @@ def swo_pdf_view(request, swo_id):
 
 
 @login_required(login_url='projectmanagement:login')
+@csrf_protect
 def co_pdf_view(request, co_id):
     co = get_object_or_404(ChangeOrder, pk=co_id)
     pdf_bytes = co.pdf.read()
@@ -702,6 +720,7 @@ def co_pdf_view(request, co_id):
 
 
 @login_required(login_url='projectmanagement:login')
+@csrf_protect
 def po_pdf_view(request, po_id):
     po = get_object_or_404(PurchaseOrder, pk=po_id)
     pdf_bytes = po.pdf.read()
@@ -710,6 +729,7 @@ def po_pdf_view(request, po_id):
 
 
 @login_required(login_url='projectmanagement:login')
+@csrf_protect
 def dco_pdf_view(request, dco_id):
     dco = get_object_or_404(DeductiveChangeOrder, pk=dco_id)
     pdf_bytes = dco.pdf.read()
@@ -718,6 +738,7 @@ def dco_pdf_view(request, dco_id):
 
 
 @login_required(login_url='projectmanagement:login')
+@csrf_protect
 def exhibit_pdf_view(request, exhibit_id):
     exhibit = get_object_or_404(Exhibit, pk=exhibit_id)
     pdf_bytes = exhibit.pdf.read()
@@ -726,12 +747,10 @@ def exhibit_pdf_view(request, exhibit_id):
 
 
 @login_required(login_url='projectmanagement:login')
+@csrf_protect
 def new_exhibit(request, project_id, sub_id):
     project = get_object_or_404(Project, pk=project_id)
-    try:
-        sub = get_object_or_404(Subcontractor, pk=sub_id)
-    except:
-        sub = get_object_or_404(Vendor, pk=sub_id)
+    sub = get_object_or_404(Subcontractor, pk=sub_id)
     groups = Group.objects.filter(project_id=project)
     subgroups = Subgroup.objects.filter(group_id__in=groups)
     total_groups = len(groups) + len(subgroups)
@@ -750,15 +769,10 @@ def new_exhibit(request, project_id, sub_id):
         exhibit.project_id = project
         exhibit.save()
 
-        line_items = process_form_data(request, project, sub)
+        line_items = process_form_data(request)
         for line_item in line_items:
             line_item.project_id = project
-            try:
-                line_item.sub_id = sub
-                line_item.vendor_id = None
-            except:
-                line_item.vendor_id = sub
-                line_item.sub_id = None
+            line_item.sub_id = sub
             line_item.exhibit_id = exhibit
             line_item.save()
 
@@ -770,7 +784,7 @@ def new_exhibit(request, project_id, sub_id):
     return render(request, 'contracts/new_exhibit.html', {'project': project, 'sub': sub, 'groups': groups, 'subgroups': subgroups, 'groups_json': groups_json, 'total_groups': total_groups})
 
 
-def process_form_data(request, project, sub):
+def process_form_data(request):
     grouped_data = []
     line_items = []
     current_group = None
@@ -827,6 +841,7 @@ def process_form_data(request, project, sub):
 
 
 @login_required(login_url='projectmanagement:login')
+@csrf_protect
 def delete_exhibit(request, exhibit_id):
     exhibit = get_object_or_404(Exhibit, pk=exhibit_id)
     project = exhibit.project_id
@@ -850,6 +865,7 @@ def delete_exhibit(request, exhibit_id):
 
 
 @login_required(login_url='projectmanagement:login')
+@csrf_protect
 def delete_invoice(request, project_id, draw_id, invoice_id):
     project = get_object_or_404(Project, pk=project_id)
     draw = get_object_or_404(Draw, pk=draw_id)
@@ -879,6 +895,7 @@ def delete_invoice(request, project_id, draw_id, invoice_id):
 
 
 @login_required(login_url='projectmanagement:login')
+@csrf_protect
 def sub_select(request, project_id):
     subs = Subcontractor.objects.order_by("name")
     project = get_object_or_404(Project, pk=project_id)
@@ -887,6 +904,7 @@ def sub_select(request, project_id):
 
 
 @login_required(login_url='projectmanagement:login')
+@csrf_protect
 def edit_estimate(request, estimate_id):
     estimate = get_object_or_404(Estimate, pk=estimate_id)
     project = get_object_or_404(Project, pk=estimate.project_id)

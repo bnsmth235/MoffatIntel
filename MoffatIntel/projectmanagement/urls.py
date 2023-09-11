@@ -59,6 +59,7 @@ urlpatterns = [
     path('new_purchase_order/<int:project_id>/', contracts.new_purchase_order, name='new_purchase_order'),
     path('new_purchase_order/', contracts.new_purchase_order, name='new_purchase_order'),
     path('new_exhibit/<int:project_id>/<int:sub_id>/', contracts.new_exhibit, name='new_exhibit'),
+    path('generate_estimate/<int:project_id>/<int:sub_id>/', estimates.generate_estimate, name='generate_estimate'),
     path('new_draw_report_by_sub/<int:project_id>/<int:sub_id>/', reports.new_draw_report_by_sub,
          name='new_draw_report_by_sub'),
 

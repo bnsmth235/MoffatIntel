@@ -1,9 +1,13 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from datetime import datetime
+
+from django.views.decorators.csrf import csrf_protect
+
 from ..models import Project, Group, Subgroup, STATE_OPTIONS, STATUS_OPTIONS
 
 @login_required(login_url='projectmanagement:login')
+@csrf_protect
 def home(request):
     recent_projects = Project.objects.order_by('-date', '-status')[:5]
     context = {'recent_projects': recent_projects}
@@ -11,6 +15,7 @@ def home(request):
 
 
 @login_required(login_url='projectmanagement:login')
+@csrf_protect
 def all(request):
     projects = Project.objects.order_by('-date', '-status')
     context = {'projects': projects}
@@ -18,12 +23,14 @@ def all(request):
 
 
 @login_required(login_url='projectmanagement:login')
+@csrf_protect
 def project_view(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
     return render(request, 'projects/project_view.html', {'project': project})
 
 
 @login_required(login_url='projectmanagement:login')
+@csrf_protect
 def new_proj(request):
     if request.method == 'POST':
         name = request.POST.get('name')
@@ -82,6 +89,7 @@ def new_proj(request):
 
 
 @login_required(login_url='projectmanagement:login')
+@csrf_protect
 def edit_proj(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
     if request.method == 'POST':
@@ -126,6 +134,7 @@ def edit_proj(request, project_id):
 
 
 @login_required(login_url='projectmanagement:login')
+@csrf_protect
 def delete_proj(request, project_id):
     if request.method == 'POST':
         username = request.POST.get('username')

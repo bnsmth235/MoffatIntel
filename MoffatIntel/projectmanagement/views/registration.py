@@ -1,8 +1,10 @@
 from django.shortcuts import render, redirect, resolve_url
 from django.contrib.auth import authenticate, logout, login
 from django.views.decorators.csrf import ensure_csrf_cookie
+from django.views.decorators.csrf import csrf_protect
 
 @ensure_csrf_cookie
+@csrf_protect
 def index(request):
     username = ""
     password = ""

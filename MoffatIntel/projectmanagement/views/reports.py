@@ -1,11 +1,14 @@
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
+from django.views.decorators.csrf import csrf_protect
+
 from ..models import Project, Draw, Group, Subgroup, Subcontractor, Vendor, Report, Invoice, Check, Contract, Exhibit, \
     Estimate, ExhibitLineItem
 from ..pdf_create.create_draw_report_by_sub import create_draw_report_by_sub
 
 @login_required(login_url='projectmanagement:login')
+@csrf_protect
 def reports(request):
     reports = Report.objects.order_by('-name')
     projects = Project.objects.order_by('-name')
@@ -35,6 +38,7 @@ def reports(request):
 
 
 @login_required(login_url='projectmanagement:login')
+@csrf_protect
 def new_draw_report_by_sub(request, project_id, sub_id):
     project = get_object_or_404(Project, pk=project_id)
     sub = None

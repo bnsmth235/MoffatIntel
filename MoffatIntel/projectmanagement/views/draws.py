@@ -8,10 +8,12 @@ from django.shortcuts import render, redirect, get_object_or_404
 from datetime import datetime
 
 from django.utils.baseconv import base64
+from django.views.decorators.csrf import csrf_protect
 
 from ..models import *
 
 @login_required(login_url='projectmanagement:login')
+@csrf_protect
 def all_draws(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
     draws = Draw.objects.order_by('-num').filter(project_id=project)
@@ -95,6 +97,7 @@ def all_draws(request, project_id):
 
 
 @login_required(login_url='projectmanagement:login')
+@csrf_protect
 def draw_view(request, project_id, draw_id):
     project = get_object_or_404(Project, pk=project_id)
     draw = get_object_or_404(Draw, pk=draw_id)
@@ -112,6 +115,7 @@ def draw_view(request, project_id, draw_id):
 
 
 @login_required(login_url='projectmanagement:login')
+@csrf_protect
 def new_draw(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
 
@@ -132,6 +136,7 @@ def new_draw(request, project_id):
 
 
 @login_required(login_url='projectmanagement:login')
+@csrf_protect
 def delete_draw(request, project_id):
     if request.method == 'POST':
         draw_id = request.POST.get('draw_id')
@@ -150,6 +155,7 @@ def delete_draw(request, project_id):
 
 
 @login_required(login_url='projectmanagement:login')
+@csrf_protect
 def new_invoice(request, project_id, draw_id):
     project = get_object_or_404(Project, pk=project_id)
     draw = get_object_or_404(Draw, pk=draw_id)
@@ -267,6 +273,7 @@ def new_invoice(request, project_id, draw_id):
 
 
 @login_required(login_url='projectmanagement:login')
+@csrf_protect
 def edit_invoice(request, project_id, draw_id, invoice_id):
     project = get_object_or_404(Project, pk=project_id)
     draw = get_object_or_404(Draw, pk=draw_id)
@@ -369,6 +376,7 @@ def edit_invoice(request, project_id, draw_id, invoice_id):
 
 
 @login_required(login_url='projectmanagement:login')
+@csrf_protect
 def delete_check(request, check_id):
     check = get_object_or_404(Check, pk=check_id)
     invoice = check.invoice_id
@@ -408,6 +416,7 @@ def delete_check(request, check_id):
 
 
 @login_required(login_url='projectmanagement:login')
+@csrf_protect
 def check_view(request, check_id):
     check = get_object_or_404(Check, pk=check_id)
     pdf_bytes = check.check_pdf.read()
@@ -416,6 +425,7 @@ def check_view(request, check_id):
 
 
 @login_required(login_url='projectmanagement:login')
+@csrf_protect
 def invoice_view(request, invoice_id):
     invoice = get_object_or_404(Invoice, pk=invoice_id)
     pdf_bytes = invoice.invoice_pdf.read()
@@ -426,6 +436,7 @@ def invoice_view(request, invoice_id):
 
 
 @login_required(login_url='projectmanagement:login')
+@csrf_protect
 def new_check(request, project_id, draw_id, invoice_id):
     draw = get_object_or_404(Draw, pk=draw_id)
     project = get_object_or_404(Project, pk=project_id)
@@ -511,6 +522,7 @@ def new_check(request, project_id, draw_id, invoice_id):
 
 
 @login_required(login_url='projectmanagement:login')
+@csrf_protect
 def edit_check(request, check_id):
     check = get_object_or_404(Check, pk=check_id)
     invoice = check.invoice_id
